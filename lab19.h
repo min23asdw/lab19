@@ -8,24 +8,24 @@ using namespace std;
 
 class Unit{
 		string name;
-		string type;		
+		string type;
 		int hp;
 		int hpmax;
 		int atk;
 		int def;
-		bool guard_on;		
-	public:			
+		bool guard_on;
+	public:
 		void create(string);
 		void showStatus();
 		void newTurn();
 		int attack(Unit &);
 		int beAttacked(int);
-		int heal();	
+		int heal();
 		void guard();
-		bool isDead();	
+		bool isDead();
 };
 
-void Unit::create(string t){ 
+void Unit::create(string t){
 	if(t == "Hero"){
 		type = "Hero";
 		cout << "Please input your name: ";
@@ -46,14 +46,14 @@ void Unit::create(string t){
 
 void Unit::showStatus(){
 	if(type == "Hero"){
-		cout << "---------------------------------------\n"; 
-		cout << name << "\n"; 
-		cout << "HP: " << hp << "/" << hpmax << "\tATK: "<< atk << "\t\tDEF: "<< def;		
+		cout << "---------------------------------------\n";
+		cout << name << "\n";
+		cout << "HP: " << hp << "/" << hpmax << "\tATK: "<< atk << "\t\tDEF: "<< def;
 		cout << "\n---------------------------------------\n";
-	}	
+	}
 	else if(type == "Monster"){
-		cout << "\t\t\t\t---------------------------------------\n"; 
-		cout << "\t\t\t\t" << name << "\n"; 
+		cout << "\t\t\t\t---------------------------------------\n";
+		cout << "\t\t\t\t" << name << "\n";
 		cout << "\t\t\t\tHP: " << hp << "\t\tATK: "<< atk << "\t\tDEF: "<< def;
 		cout << "\n\t\t\t\t---------------------------------------\n";
 	}
@@ -68,16 +68,50 @@ void Unit::newTurn(){
 /////////////////////////////////////////////////////////////////////////////////////
 //Write function members isDead(), guard(), heal(), beAttacked(), and attack() here//
 /////////////////////////////////////////////////////////////////////////////////////
+bool Unit::isDead(){
+	return (hp <= 0) ? true : false;
+}
 
+void Unit::guard(){
+	guard_on = true;
+}
 
+int Unit::beAttacked(int oppatk){
+	if(!guard_on){
+		int damage = oppatk - def;
+		hp -= damage;
+		return damage;
+	}
+	else{
+		int damage = (oppatk - def)/3;
+		hp -= damage;
+		return damage;
+	}
+}
+
+int Unit::attack(Unit &opp){
+	return opp.beAttacked(atk);
+}
+
+int Unit::heal(){
+	int heal = rand()%21 + 10;
+	if(hp + heal >= hpmax){
+		int temp = hp;
+		hp = hpmax;
+		return hpmax - temp;
+	} else {
+		hp += heal;
+		return heal;
+	}
+}
 
 void drawScene(char p_action,int p,char m_action,int m){
 	cout << "                                                       \n";
 	if(p_action == 'A'){
 	cout << "                                       "<< -p <<"\n";
 	}else{
-	cout << "                                                       \n";	
-	}	
+	cout << "                                                       \n";
+	}
 	cout << "                                *               *      \n";
 	cout << "                                **  *********  **      \n";
 	cout << "                                ****         ****      \n";
@@ -86,18 +120,18 @@ void drawScene(char p_action,int p,char m_action,int m){
 	}else if(m_action == 'G'){
 	cout << "                                 *** **   ** ***       Guard!\n";
 	}else{
-	cout << "                                 *** **   ** ***       \n";	
+	cout << "                                 *** **   ** ***       \n";
 	}
 	cout << "                                  ** **   ** **        \n";
 	cout << "                   ***             *         *         \n";
 	if(p_action == 'A'){
-	cout << "        Attack!    ***  *           *********          \n";		
+	cout << "        Attack!    ***  *           *********          \n";
 	}else if(p_action == 'H'){
 	cout << "      Heal! +" << setw(2) << p << "    ***  *           *********          \n";
 	}else if(p_action == 'G'){
 	cout << "         Guard!    ***  *           *********          \n";
 	}else{
-	cout << "                   ***  *           *********          \n";	
+	cout << "                   ***  *           *********          \n";
 	}
 	cout << "                    *  *       ***  *  *  *            \n";
 	cout << "                  *****           **   *   *           \n";
@@ -108,7 +142,7 @@ void drawScene(char p_action,int p,char m_action,int m){
 };
 
 
-void playerWin(){	
+void playerWin(){
 	cout << "*******************************************************\n";
 	for(int i = 0; i < 3; i++) cout << "*                                                     *\n";
 	cout << "*                   YOU WIN!!!                        *\n";
